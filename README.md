@@ -5,6 +5,7 @@ A React TypeScript application for searching and viewing anime details using the
 ## Features
 
 - **Instant Search**: Debounced search with 250ms delay
+- **Advanced Filters**: Score, Status, Year, and Genre filtering
 - **Server-side Pagination**: Navigate through search results
 - **Anime Details**: Comprehensive anime information page
 - **Redux State Management**: Centralized state with Redux Toolkit
@@ -48,7 +49,11 @@ The application will be available at `http://localhost:4000`
 src/
 ├── components/          # Reusable UI components
 │   ├── SearchBar.tsx   # Search input with debouncing
+│   ├── FilterTabs.tsx  # Type filter tabs
+│   ├── AdvancedFilters.tsx # Advanced filter controls
 │   ├── AnimeCard.tsx   # Anime display card
+│   ├── SkeletonCard.tsx # Loading skeleton
+│   ├── ErrorMessage.tsx # Error handling
 │   └── Pagination.tsx  # Pagination controls
 ├── pages/              # Page components
 │   ├── SearchPage.tsx  # Main search interface
@@ -81,13 +86,14 @@ npm run build
 ## Bonus Implementation
 
 ### User Experience Enhancements:
-- **Filter Tabs**: Interactive tabs for anime types (TV, Movies, OVA, Special) with modern tab design
-- **Skeleton Loaders**: Animated loading placeholders that match the actual content layout
-- **Enhanced Error Handling**: Specific error messages for network failures, rate limiting, and server errors with retry functionality
+- **Filter Tabs**: Interactive tabs for anime types (TV, Movies, OVA, Special)
+- **Advanced Filters**: Score (9.0+ to <6.0), Status, Year (2024 to <1996), Genre (including "Others")
+- **Clear Search**: One-click search clearing functionality
+- **Skeleton Loaders**: Animated loading placeholders matching content layout
+- **Enhanced Error Handling**: Specific error messages with retry functionality
 - **Empty States**: Contextual messages for no results and initial state
-- **Responsive Design**: Mobile-friendly layout with CSS Grid and flexible components
-- **Hover Effects**: Smooth animations on cards and interactive elements
-- **Clean Modern UI**: Minimal design with proper spacing, colors, and typography
+- **Responsive Design**: Mobile-friendly layout with CSS Grid
+- **Clean Modern UI**: Minimal design with proper spacing and typography
 
 ### Technical Excellence:
 - **Race Condition Handling**: AbortSignal implementation prevents outdated API responses
@@ -98,7 +104,7 @@ npm run build
 - **State Management**: Clean Redux architecture with proper separation of concerns
 
 ### Additional Features:
-- **Filter Integration**: Seamless integration of filters with search and pagination
+- **Comprehensive Filtering**: All filters work together seamlessly (type + score + year + genre + status)
+- **Filter Persistence**: All filters maintained across pagination and navigation
 - **Loading State Management**: Proper loading states for all async operations
-- **Accessibility**: Proper focus management and keyboard navigation
 - **Mobile Optimization**: Touch-friendly interface with responsive breakpoints
