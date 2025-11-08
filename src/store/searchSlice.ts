@@ -1,0 +1,69 @@
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { Anime } from '../types/anime';
+import { searchAnime } from '../services/api';
+
+interface SearchState {
+  query: string;
+  results: Anime[];
+  loading: boolean;
+  error: string | null;
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
+}
+
+const initialState: SearchState = {
+  query: '',
+  results: [],
+  loading: false,
+  error: null,
+  currentPage: 1,
+  totalPages: 1,
+  hasNextPage: false,
+};
+
+export const performSearch = createAsyncThunk(
+  'search/performSearch',
+  async ({ query, page }: { query: string; page: number }, { signal }) => {
+    const response = await searchAnime(query, page, signal);
+    return response;
+  }
+);
+
+const searchSlice = createSlice({
+  name: 'search',
+  initialState,
+  reducers: {
+    setQuery: (state, action: PayloadAction<string>) => {
+      state.query = action.payload;
+    },
+    clearResults: (state) => {
+      state.results = [];
+      state.currentPage = 1;
+      state.totalPages = 1;
+      state.hasNextPage = false;
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(performSearch.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(performSearch.fulfilled, (state, action) => {
+        state.loading = false;
+        state.results = action.payload.data;
+        state.currentPage = action.payload.pagination.current_page;
+        state.totalPages = action.payload.pagination.last_visible_page;
+        state.hasNextPage = action.payload.pagination.has_next_page;
+      })
+      .addCase(performSearch.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Search failed';
+      });
+  },
+});
+
+export const { setQuery, clearResults } = searchSlice.actions;
+export default searchSlice.reducer;
