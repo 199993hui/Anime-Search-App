@@ -50,13 +50,29 @@ export const searchAnime = async (
   }
   
   try {
+    // Create timeout controller
+    const timeoutController = new AbortController();
+    const timeoutId = setTimeout(() => timeoutController.abort(), 10000); // 10 second timeout
+    
+    // Combine signals if provided
+    const combinedSignal = signal ? (
+      (() => {
+        const controller = new AbortController();
+        signal.addEventListener('abort', () => controller.abort());
+        timeoutController.signal.addEventListener('abort', () => controller.abort());
+        return controller.signal;
+      })()
+    ) : timeoutController.signal;
+    
     const response = await fetch(url, { 
-      signal,
+      signal: combinedSignal,
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'AnimeSearchApp/1.0'
       }
     });
+    
+    clearTimeout(timeoutId);
     
     if (response.status === 429) {
       throw new Error('Rate limit exceeded. Please wait a moment before searching again.');
@@ -74,7 +90,11 @@ export const searchAnime = async (
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('Request cancelled');
+        if (signal?.aborted) {
+          throw new Error('Request cancelled');
+        } else {
+          throw new Error('Request timeout. The server is taking too long to respond.');
+        }
       }
       if (error.message.includes('Failed to fetch')) {
         throw new Error('Network error. Please check your internet connection.');
@@ -87,12 +107,19 @@ export const searchAnime = async (
 
 export const getAnimeById = async (id: number): Promise<{ data: Anime }> => {
   try {
+    // Create timeout controller
+    const timeoutController = new AbortController();
+    const timeoutId = setTimeout(() => timeoutController.abort(), 10000); // 10 second timeout
+    
     const response = await fetch(`${BASE_URL}/anime/${id}`, {
+      signal: timeoutController.signal,
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'AnimeSearchApp/1.0'
       }
     });
+    
+    clearTimeout(timeoutId);
     
     if (response.status === 429) {
       throw new Error('Rate limit exceeded. Please wait a moment.');
@@ -109,6 +136,9 @@ export const getAnimeById = async (id: number): Promise<{ data: Anime }> => {
     return response.json();
   } catch (error) {
     if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout. The server is taking too long to respond.');
+      }
       if (error.message.includes('Failed to fetch')) {
         throw new Error('Network error. Please check your internet connection.');
       }
