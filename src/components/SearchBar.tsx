@@ -6,16 +6,16 @@ import { useDebounce } from '../hooks/useDebounce';
 
 export const SearchBar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { query } = useSelector((state: RootState) => state.search);
+  const { query, activeFilter } = useSelector((state: RootState) => state.search);
   const debouncedQuery = useDebounce(query, 250);
 
   useEffect(() => {
     if (debouncedQuery.trim()) {
-      dispatch(performSearch({ query: debouncedQuery, page: 1 }));
+      dispatch(performSearch({ query: debouncedQuery, page: 1, filter: activeFilter }));
     } else {
       dispatch(clearResults());
     }
-  }, [debouncedQuery, dispatch]);
+  }, [debouncedQuery, activeFilter, dispatch]);
 
   return (
     <div style={{ marginBottom: '20px' }}>

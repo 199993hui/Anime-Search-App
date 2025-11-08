@@ -10,6 +10,7 @@ interface SearchState {
   currentPage: number;
   totalPages: number;
   hasNextPage: boolean;
+  activeFilter: string;
 }
 
 const initialState: SearchState = {
@@ -20,12 +21,13 @@ const initialState: SearchState = {
   currentPage: 1,
   totalPages: 1,
   hasNextPage: false,
+  activeFilter: 'all',
 };
 
 export const performSearch = createAsyncThunk(
   'search/performSearch',
-  async ({ query, page }: { query: string; page: number }, { signal }) => {
-    const response = await searchAnime(query, page, signal);
+  async ({ query, page, filter }: { query: string; page: number; filter?: string }, { signal }) => {
+    const response = await searchAnime(query, page, filter, signal);
     return response;
   }
 );
@@ -36,6 +38,9 @@ const searchSlice = createSlice({
   reducers: {
     setQuery: (state, action: PayloadAction<string>) => {
       state.query = action.payload;
+    },
+    setFilter: (state, action: PayloadAction<string>) => {
+      state.activeFilter = action.payload;
     },
     clearResults: (state) => {
       state.results = [];
@@ -65,5 +70,5 @@ const searchSlice = createSlice({
   },
 });
 
-export const { setQuery, clearResults } = searchSlice.actions;
+export const { setQuery, setFilter, clearResults } = searchSlice.actions;
 export default searchSlice.reducer;

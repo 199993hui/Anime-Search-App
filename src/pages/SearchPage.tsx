@@ -1,11 +1,22 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../store';
+import { performSearch } from '../store/searchSlice';
 import { SearchBar } from '../components/SearchBar';
+import { FilterTabs } from '../components/FilterTabs';
 import { AnimeCard } from '../components/AnimeCard';
+import { SkeletonCard } from '../components/SkeletonCard';
+import { ErrorMessage } from '../components/ErrorMessage';
 import { Pagination } from '../components/Pagination';
 
 export const SearchPage = () => {
-  const { results, loading, error, query } = useSelector((state: RootState) => state.search);
+  const dispatch = useDispatch<AppDispatch>();
+  const { results, loading, error, query, activeFilter } = useSelector((state: RootState) => state.search);
+
+  const handleRetry = () => {
+    if (query.trim()) {
+      dispatch(performSearch({ query, page: 1, filter: activeFilter }));
+    }
+  };
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
@@ -13,16 +24,25 @@ export const SearchPage = () => {
       
       <SearchBar />
       
+      <FilterTabs />
+      
       {loading && (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <div>Loading...</div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gap: '20px',
+            marginBottom: '20px',
+          }}
+        >
+          {Array.from({ length: 8 }).map((_, index) => (
+            <SkeletonCard key={index} />
+          ))}
         </div>
       )}
       
       {error && (
-        <div style={{ textAlign: 'center', padding: '40px', color: 'red' }}>
-          Error: {error}
-        </div>
+        <ErrorMessage error={error} onRetry={handleRetry} />
       )}
       
       {!loading && !error && query.trim() && results.length === 0 && (
