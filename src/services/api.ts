@@ -4,7 +4,7 @@ const BASE_URL = 'https://api.jikan.moe/v4';
 
 // Rate limiting helper
 let lastRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
+const MIN_REQUEST_INTERVAL = 300; // 300ms between requests
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -15,10 +15,10 @@ export const searchAnime = async (
   advancedFilters?: { status?: string; score?: string; year?: string; genre?: string; },
   signal?: AbortSignal
 ): Promise<SearchResponse> => {
-  // Rate limiting
+  // Rate limiting - only delay if requests are too frequent
   const now = Date.now();
   const timeSinceLastRequest = now - lastRequestTime;
-  if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+  if (lastRequestTime > 0 && timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
     await delay(MIN_REQUEST_INTERVAL - timeSinceLastRequest);
   }
   lastRequestTime = Date.now();
