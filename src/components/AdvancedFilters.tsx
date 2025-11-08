@@ -27,6 +27,10 @@ const GENRE_OPTIONS = [
   { value: '22', label: 'Romance' },
   { value: '24', label: 'Sci-Fi' },
   { value: '36', label: 'Slice of Life' },
+  { value: '30', label: 'Sports' },
+  { value: '37', label: 'Supernatural' },
+  { value: '41', label: 'Thriller' },
+  { value: 'others', label: 'Others' },
 ];
 
 export const AdvancedFilters = () => {
@@ -123,6 +127,7 @@ export const AdvancedFilters = () => {
             {years.map(year => (
               <option key={year} value={year}>{year}</option>
             ))}
+            <option value="<1996">&lt; 1996 (Classic)</option>
           </select>
         </div>
 

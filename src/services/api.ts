@@ -23,10 +23,18 @@ export const searchAnime = async (
       url += `&min_score=${advancedFilters.score}`;
     }
     if (advancedFilters.year) {
-      url += `&start_date=${advancedFilters.year}-01-01&end_date=${advancedFilters.year}-12-31`;
+      if (advancedFilters.year === '<1996') {
+        url += `&end_date=1995-12-31`;
+      } else {
+        url += `&start_date=${advancedFilters.year}-01-01&end_date=${advancedFilters.year}-12-31`;
+      }
     }
     if (advancedFilters.genre) {
-      url += `&genres=${advancedFilters.genre}`;
+      if (advancedFilters.genre === 'others') {
+        url += `&genres_exclude=1,2,4,8,10,14,22,24,30,36,37,41`;
+      } else {
+        url += `&genres=${advancedFilters.genre}`;
+      }
     }
   }
   
