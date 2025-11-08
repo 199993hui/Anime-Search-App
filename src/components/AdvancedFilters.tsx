@@ -36,14 +36,14 @@ const GENRE_OPTIONS = [
 
 export const AdvancedFilters = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { query, advancedFilters } = useSelector((state: RootState) => state.search);
+  const { query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
 
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = { ...advancedFilters, [key]: value };
     dispatch(setAdvancedFilters(newFilters));
     
     if (query.trim()) {
-      dispatch(performSearch({ query, page: 1, advancedFilters: newFilters }));
+      dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters: newFilters }));
     }
   };
 
