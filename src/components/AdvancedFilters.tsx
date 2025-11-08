@@ -15,6 +15,7 @@ const SCORE_OPTIONS = [
   { value: '8', label: '8.0+ (Very Good)' },
   { value: '7', label: '7.0+ (Good)' },
   { value: '6', label: '6.0+ (Fair)' },
+  { value: '<6', label: '< 6.0 (Poor)' },
 ];
 
 const GENRE_OPTIONS = [

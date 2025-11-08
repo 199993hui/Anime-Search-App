@@ -20,7 +20,11 @@ export const searchAnime = async (
       url += `&status=${advancedFilters.status}`;
     }
     if (advancedFilters.score) {
-      url += `&min_score=${advancedFilters.score}`;
+      if (advancedFilters.score === '<6') {
+        url += `&max_score=5.99`;
+      } else {
+        url += `&min_score=${advancedFilters.score}`;
+      }
     }
     if (advancedFilters.year) {
       if (advancedFilters.year === '<1996') {
