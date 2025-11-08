@@ -15,9 +15,17 @@ export const SearchPage = () => {
   const { results, loading, error, query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
 
   useEffect(() => {
-    // Load initial results on page load
-    dispatch(performSearch({ query: '', page: 1, filter: 'all', advancedFilters: {} }));
+    // Load initial results on page load or refresh results when returning with filters
+    dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
   }, [dispatch]);
+
+  useEffect(() => {
+    // Refresh results when returning to page if filters are set but no results
+    const hasFilters = query.trim() || activeFilter !== 'all' || Object.values(advancedFilters).some(v => v);
+    if (hasFilters && results.length === 0 && !loading) {
+      dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
+    }
+  }, [query, activeFilter, advancedFilters, results.length, loading, dispatch]);
 
   const handleRetry = () => {
     dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
