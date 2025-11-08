@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
-import { fetchAnimeById, clearCurrentAnime } from '../store/animeSlice';
+import { fetchAnimeById } from '../store/animeSlice';
 
 export const AnimeDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { currentAnime, loading, error } = useSelector((state: RootState) => state.anime);
 
@@ -13,10 +14,11 @@ export const AnimeDetailPage = () => {
     if (id) {
       dispatch(fetchAnimeById(Number(id)));
     }
-    return () => {
-      dispatch(clearCurrentAnime());
-    };
   }, [id, dispatch]);
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
   if (loading) {
     return (
@@ -30,9 +32,19 @@ export const AnimeDetailPage = () => {
     return (
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', textAlign: 'center' }}>
         <div style={{ color: 'red', marginBottom: '20px' }}>Error: {error}</div>
-        <Link to="/" style={{ color: '#007bff', textDecoration: 'none' }}>
+        <button 
+          onClick={handleBackClick}
+          style={{ 
+            color: '#007bff', 
+            textDecoration: 'none',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
           ← Back to Search
-        </Link>
+        </button>
       </div>
     );
   }
@@ -41,18 +53,40 @@ export const AnimeDetailPage = () => {
     return (
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', textAlign: 'center' }}>
         <div>Anime not found</div>
-        <Link to="/" style={{ color: '#007bff', textDecoration: 'none' }}>
+        <button 
+          onClick={handleBackClick}
+          style={{ 
+            color: '#007bff', 
+            textDecoration: 'none',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
           ← Back to Search
-        </Link>
+        </button>
       </div>
     );
   }
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <Link to="/" style={{ color: '#007bff', textDecoration: 'none', marginBottom: '20px', display: 'inline-block' }}>
+      <button 
+        onClick={handleBackClick}
+        style={{ 
+          color: '#007bff', 
+          textDecoration: 'none', 
+          marginBottom: '20px', 
+          display: 'inline-block',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '16px'
+        }}
+      >
         ← Back to Search
-      </Link>
+      </button>
       
       <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
         <img

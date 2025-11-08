@@ -1,6 +1,6 @@
 # Anime Search App
 
-A professional React TypeScript application for discovering and exploring anime with advanced filtering capabilities. Built with modern web technologies and enhanced user experience features.
+A React TypeScript application for discovering and exploring anime with advanced filtering capabilities. Built with modern enhanced user experience features.
 
 ## 🎯 Bonus Implementation
 
@@ -14,7 +14,7 @@ A professional React TypeScript application for discovering and exploring anime 
 #### **Advanced Multi-Filter System**
 - **Type Filters**: Interactive tabs for TV Series, Movies, OVA, Special with modern tab design
 - **Score Filtering**: Comprehensive range from 9.0+ (Excellent) down to <6.0 (Poor) for quality-based discovery
-- **Year Filtering**: Complete timeline from 2024 back to <1996 (Classic) for era-based exploration
+- **Year Filtering**: Complete timeline from 2025 back to <1996 (Classic) for era-based exploration
 - **Genre Filtering**: 12 popular genres plus "Others" option that excludes common genres to find unique content
 - **Status Filtering**: Currently Airing, Finished Airing, Not Yet Aired for release-based browsing
 
@@ -27,12 +27,12 @@ A professional React TypeScript application for discovering and exploring anime 
 #### **Professional UI/UX**
 - **Skeleton Loaders**: Animated loading placeholders that match actual content layout
 - **Smart Error Handling**: Categorized error messages (Network, Rate Limiting, Server) with retry functionality
-- **Contextual Empty States**: Different messages for no search results vs. no filter matches
+- **Contextual Empty States**: Messages for no search results
 - **Responsive Grid Design**: Mobile-optimized layout with CSS Grid that adapts to screen size
 - **Hover Animations**: Smooth card transitions and interactive feedback
 - **Clean Modern Design**: Minimal interface with proper spacing, typography, and color scheme
 
-### ⚡ Technical Excellence
+## ⚡ Technical Excellence
 
 #### **Performance Optimization**
 - **Race Condition Prevention**: AbortSignal implementation cancels outdated API requests
@@ -52,7 +52,7 @@ A professional React TypeScript application for discovering and exploring anime 
 - **Pagination Integration**: Server-side pagination that works with all filter combinations
 - **API Error Categorization**: Specific handling for different types of API failures
 
-### 🚀 Additional Features
+## 🚀 Additional Features
 
 #### **Enhanced Navigation**
 - **Deep Linking**: Direct URLs to anime details with proper routing
