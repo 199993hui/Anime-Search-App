@@ -4,13 +4,13 @@ import { performSearch } from '../store/searchSlice';
 
 export const Pagination = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { query, currentPage, totalPages, hasNextPage, activeFilter } = useSelector(
+  const { query, currentPage, totalPages, hasNextPage, activeFilter, advancedFilters } = useSelector(
     (state: RootState) => state.search
   );
 
   const handlePageChange = (page: number) => {
     if (query.trim()) {
-      dispatch(performSearch({ query, page, filter: activeFilter }));
+      dispatch(performSearch({ query, page, filter: activeFilter, advancedFilters }));
     }
   };
 

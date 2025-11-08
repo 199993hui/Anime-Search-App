@@ -12,12 +12,12 @@ const FILTER_OPTIONS = [
 
 export const FilterTabs = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { query, activeFilter } = useSelector((state: RootState) => state.search);
+  const { query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
 
   const handleFilterChange = (filterKey: string) => {
     dispatch(setFilter(filterKey));
     if (query.trim()) {
-      dispatch(performSearch({ query, page: 1, filter: filterKey }));
+      dispatch(performSearch({ query, page: 1, filter: filterKey, advancedFilters }));
     }
   };
 

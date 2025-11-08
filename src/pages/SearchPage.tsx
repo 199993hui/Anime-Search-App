@@ -3,6 +3,7 @@ import { RootState, AppDispatch } from '../store';
 import { performSearch } from '../store/searchSlice';
 import { SearchBar } from '../components/SearchBar';
 import { FilterTabs } from '../components/FilterTabs';
+import { AdvancedFilters } from '../components/AdvancedFilters';
 import { AnimeCard } from '../components/AnimeCard';
 import { SkeletonCard } from '../components/SkeletonCard';
 import { ErrorMessage } from '../components/ErrorMessage';
@@ -10,11 +11,11 @@ import { Pagination } from '../components/Pagination';
 
 export const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { results, loading, error, query, activeFilter } = useSelector((state: RootState) => state.search);
+  const { results, loading, error, query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
 
   const handleRetry = () => {
     if (query.trim()) {
-      dispatch(performSearch({ query, page: 1, filter: activeFilter }));
+      dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
     }
   };
 
@@ -25,6 +26,8 @@ export const SearchPage = () => {
       <SearchBar />
       
       <FilterTabs />
+      
+      <AdvancedFilters />
       
       {loading && (
         <div
