@@ -17,6 +17,16 @@ interface SearchState {
     year?: string;
     genre?: string;
   };
+  cachedState: {
+    query: string;
+    activeFilter: string;
+    advancedFilters: {
+      status?: string;
+      score?: string;
+      year?: string;
+      genre?: string;
+    };
+  } | null;
 }
 
 const initialState: SearchState = {
@@ -29,6 +39,7 @@ const initialState: SearchState = {
   hasNextPage: false,
   activeFilter: 'all',
   advancedFilters: {},
+  cachedState: null,
 };
 
 export const performSearch = createAsyncThunk(
@@ -64,6 +75,22 @@ const searchSlice = createSlice({
       state.hasNextPage = false;
       state.error = null;
     },
+    cacheCurrentState: (state) => {
+      state.cachedState = {
+        query: state.query,
+        activeFilter: state.activeFilter,
+        advancedFilters: { ...state.advancedFilters },
+      };
+    },
+    restoreCachedState: (state) => {
+      if (state.cachedState) {
+        state.query = state.cachedState.query;
+        state.activeFilter = state.cachedState.activeFilter;
+        state.advancedFilters = { ...state.cachedState.advancedFilters };
+        state.currentPage = 1;
+        state.cachedState = null;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -85,5 +112,5 @@ const searchSlice = createSlice({
   },
 });
 
-export const { setQuery, setFilter, setAdvancedFilters, clearResults } = searchSlice.actions;
+export const { setQuery, setFilter, setAdvancedFilters, clearResults, cacheCurrentState, restoreCachedState } = searchSlice.actions;
 export default searchSlice.reducer;

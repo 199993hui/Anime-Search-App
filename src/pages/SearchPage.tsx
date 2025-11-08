@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
-import { performSearch } from '../store/searchSlice';
+import { performSearch, restoreCachedState } from '../store/searchSlice';
 import { SearchBar } from '../components/SearchBar';
 import { FilterTabs } from '../components/FilterTabs';
 import { AdvancedFilters } from '../components/AdvancedFilters';
@@ -12,20 +12,27 @@ import { Pagination } from '../components/Pagination';
 
 export const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { results, loading, error, query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
+  const { results, loading, error, query, activeFilter, advancedFilters, cachedState } = useSelector((state: RootState) => state.search);
 
   useEffect(() => {
-    // Load initial results on page load or refresh results when returning with filters
-    dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
-  }, [dispatch]);
-
-  useEffect(() => {
-    // Refresh results when returning to page if filters are set but no results
-    const hasFilters = query.trim() || activeFilter !== 'all' || Object.values(advancedFilters).some(v => v);
-    if (hasFilters && results.length === 0 && !loading) {
-      dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
+    // Restore cached state if returning from detail page
+    if (cachedState) {
+      dispatch(restoreCachedState());
+      return;
     }
-  }, [query, activeFilter, advancedFilters, results.length, loading, dispatch]);
+    // Load initial results on page load
+    dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
+  }, [dispatch, cachedState]);
+
+  useEffect(() => {
+    // Refresh results when cached state is restored
+    if (!cachedState) {
+      const hasFilters = query.trim() || activeFilter !== 'all' || Object.values(advancedFilters).some(v => v);
+      if (hasFilters && results.length === 0 && !loading) {
+        dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
+      }
+    }
+  }, [query, activeFilter, advancedFilters, results.length, loading, dispatch, cachedState]);
 
   const handleRetry = () => {
     dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
