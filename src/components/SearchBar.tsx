@@ -23,7 +23,7 @@ export const SearchBar = () => {
   };
 
   return (
-    <div style={{ marginBottom: '20px', position: 'relative' }}>
+    <div style={{ marginBottom: '20px' }}>
       <input
         type="text"
         placeholder="Search for anime..."
@@ -31,7 +31,7 @@ export const SearchBar = () => {
         onChange={(e) => dispatch(setQuery(e.target.value))}
         style={{
           width: '100%',
-          padding: '12px 50px 12px 12px',
+          padding: '12px',
           fontSize: '16px',
           border: '2px solid #ddd',
           borderRadius: '8px',
@@ -42,26 +42,23 @@ export const SearchBar = () => {
         <button
           onClick={handleClear}
           style={{
-            position: 'absolute',
-            right: '8px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'none',
-            border: 'none',
-            fontSize: '18px',
-            cursor: 'pointer',
-            color: '#666',
-            padding: '4px',
+            marginTop: '8px',
+            padding: '6px 12px',
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #dee2e6',
             borderRadius: '4px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            color: '#6c757d',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f0f0f0';
+            e.currentTarget.style.backgroundColor = '#e9ecef';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.backgroundColor = '#f8f9fa';
           }}
         >
-          ✕
+          Clear
         </button>
       )}
     </div>
