@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
 import { performSearch } from '../store/searchSlice';
@@ -13,10 +14,13 @@ export const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { results, loading, error, query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
 
+  useEffect(() => {
+    // Load initial results on page load
+    dispatch(performSearch({ query: '', page: 1, filter: 'all', advancedFilters: {} }));
+  }, [dispatch]);
+
   const handleRetry = () => {
-    if (query.trim()) {
-      dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
-    }
+    dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
   };
 
   return (
@@ -48,9 +52,9 @@ export const SearchPage = () => {
         <ErrorMessage error={error} onRetry={handleRetry} />
       )}
       
-      {!loading && !error && query.trim() && results.length === 0 && (
+      {!loading && !error && results.length === 0 && (
         <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-          No anime found for "{query}"
+          {query.trim() ? `No anime found for "${query}"` : 'No anime found with current filters'}
         </div>
       )}
       
@@ -71,12 +75,6 @@ export const SearchPage = () => {
           
           <Pagination />
         </>
-      )}
-      
-      {!query.trim() && (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-          Start typing to search for anime...
-        </div>
       )}
     </div>
   );

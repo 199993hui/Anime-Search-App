@@ -10,11 +10,7 @@ export const SearchBar = () => {
   const debouncedQuery = useDebounce(query, 250);
 
   useEffect(() => {
-    if (debouncedQuery.trim()) {
-      dispatch(performSearch({ query: debouncedQuery, page: 1, filter: activeFilter, advancedFilters }));
-    } else {
-      dispatch(clearResults());
-    }
+    dispatch(performSearch({ query: debouncedQuery, page: 1, filter: activeFilter, advancedFilters }));
   }, [debouncedQuery, activeFilter, advancedFilters, dispatch]);
 
   const handleClear = () => {

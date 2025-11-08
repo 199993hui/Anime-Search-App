@@ -9,7 +9,13 @@ export const searchAnime = async (
   advancedFilters?: { status?: string; score?: string; year?: string; genre?: string; },
   signal?: AbortSignal
 ): Promise<SearchResponse> => {
-  let url = `${BASE_URL}/anime?q=${encodeURIComponent(query)}&page=${page}&limit=20`;
+  let url;
+  
+  if (query.trim()) {
+    url = `${BASE_URL}/anime?q=${encodeURIComponent(query)}&page=${page}&limit=20`;
+  } else {
+    url = `${BASE_URL}/anime?page=${page}&limit=20&order_by=popularity&sort=asc`;
+  }
   
   if (filter && filter !== 'all') {
     url += `&type=${filter}`;

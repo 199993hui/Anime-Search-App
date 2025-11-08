@@ -16,12 +16,8 @@ export const FilterTabs = () => {
 
   const handleFilterChange = (filterKey: string) => {
     dispatch(setFilter(filterKey));
-    if (query.trim()) {
-      dispatch(performSearch({ query, page: 1, filter: filterKey, advancedFilters }));
-    }
+    dispatch(performSearch({ query, page: 1, filter: filterKey, advancedFilters }));
   };
-
-  if (!query.trim()) return null;
 
   return (
     <div style={{ marginBottom: '20px' }}>

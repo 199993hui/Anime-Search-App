@@ -9,12 +9,10 @@ export const Pagination = () => {
   );
 
   const handlePageChange = (page: number) => {
-    if (query.trim()) {
-      dispatch(performSearch({ query, page, filter: activeFilter, advancedFilters }));
-    }
+    dispatch(performSearch({ query, page, filter: activeFilter, advancedFilters }));
   };
 
-  if (!query.trim() || totalPages <= 1) return null;
+  if (totalPages <= 1) return null;
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '20px' }}>

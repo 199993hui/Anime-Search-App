@@ -41,16 +41,11 @@ export const AdvancedFilters = () => {
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = { ...advancedFilters, [key]: value };
     dispatch(setAdvancedFilters(newFilters));
-    
-    if (query.trim()) {
-      dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters: newFilters }));
-    }
+    dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters: newFilters }));
   };
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 30 }, (_, i) => currentYear - i);
-
-  if (!query.trim()) return null;
 
   return (
     <div style={{ 
