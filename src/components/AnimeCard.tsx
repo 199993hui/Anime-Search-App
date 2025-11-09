@@ -1,7 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../store';
-import { cacheCurrentState } from '../store/searchSlice';
 import { Anime } from '../types/anime';
 
 interface AnimeCardProps {
@@ -9,16 +6,9 @@ interface AnimeCardProps {
 }
 
 export const AnimeCard = ({ anime }: AnimeCardProps) => {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const handleClick = () => {
-    dispatch(cacheCurrentState());
-  };
-
   return (
     <Link
       to={`/anime/${anime.mal_id}`}
-      onClick={handleClick}
       style={{
         textDecoration: 'none',
         color: 'inherit',

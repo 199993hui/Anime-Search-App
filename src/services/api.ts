@@ -6,8 +6,7 @@ export const searchAnime = async (
   query: string, 
   page: number = 1, 
   filter?: string, 
-  advancedFilters?: { status?: string; score?: string; year?: string; genre?: string; },
-  signal?: AbortSignal
+  advancedFilters?: { status?: string; score?: string; year?: string; genre?: string; }
 ): Promise<SearchResponse> => {
 
   let url;
@@ -54,18 +53,8 @@ export const searchAnime = async (
     const timeoutController = new AbortController();
     const timeoutId = setTimeout(() => timeoutController.abort(), 10000); // 10 second timeout
     
-    // Combine signals if provided
-    const combinedSignal = signal ? (
-      (() => {
-        const controller = new AbortController();
-        signal.addEventListener('abort', () => controller.abort());
-        timeoutController.signal.addEventListener('abort', () => controller.abort());
-        return controller.signal;
-      })()
-    ) : timeoutController.signal;
-    
     const response = await fetch(url, { 
-      signal: combinedSignal,
+      signal: timeoutController.signal,
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'AnimeSearchApp/1.0'
@@ -90,11 +79,7 @@ export const searchAnime = async (
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        if (signal?.aborted) {
-          throw new Error('Request cancelled');
-        } else {
-          throw new Error('Request timeout. The server is taking too long to respond.');
-        }
+        throw new Error('Request timeout. The server is taking too long to respond.');
       }
       if (error.message.includes('Failed to fetch')) {
         throw new Error('Network error. Please check your internet connection.');

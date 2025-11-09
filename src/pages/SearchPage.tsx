@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
 import { performSearch, restoreCachedState } from '../store/searchSlice';
+import { searchAnime } from '../services/api';
+import { Anime } from '../types/anime';
 import { SearchBar } from '../components/SearchBar';
 import { FilterTabs } from '../components/FilterTabs';
 import { AdvancedFilters } from '../components/AdvancedFilters';
@@ -13,30 +15,53 @@ import { Pagination } from '../components/Pagination';
 export const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { results, loading, error, query, activeFilter, advancedFilters, cachedState } = useSelector((state: RootState) => state.search);
+  const [fallbackResults, setFallbackResults] = useState<Anime[]>([]);
+  const [fallbackLoading, setFallbackLoading] = useState(false);
 
   useEffect(() => {
-    // Restore cached state if returning from detail page
-    if (cachedState) {
-      dispatch(restoreCachedState());
-      return;
-    }
-    // Load initial results on page load
-    dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
-  }, [dispatch, cachedState]);
-
-  useEffect(() => {
-    // Refresh results when cached state is restored
-    if (!cachedState) {
-      const hasFilters = query.trim() || activeFilter !== 'all' || Object.values(advancedFilters).some(v => v);
-      if (hasFilters && results.length === 0 && !loading) {
-        dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
+    const loadInitialData = async () => {
+      try {
+        dispatch(performSearch({ query: '', page: 1, filter: 'all', advancedFilters: {} }));
+        
+        // Fallback direct API call
+        setTimeout(async () => {
+          if (results.length === 0 && error) {
+            setFallbackLoading(true);
+            try {
+              const response = await searchAnime('', 1);
+              setFallbackResults(response.data);
+            } catch (e) {
+              console.error('Fallback failed:', e);
+            }
+            setFallbackLoading(false);
+          }
+        }, 1000);
+      } catch (e) {
+        console.error('Initial load failed:', e);
       }
-    }
-  }, [query, activeFilter, advancedFilters, results.length, loading, dispatch, cachedState]);
+    };
+    
+    loadInitialData();
+  }, [dispatch]);
 
-  const handleRetry = () => {
+  const handleRetry = async () => {
     dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
+    
+    // Also try direct API call
+    try {
+      setFallbackLoading(true);
+      const response = await searchAnime(query, 1, activeFilter, advancedFilters);
+      setFallbackResults(response.data);
+      setFallbackLoading(false);
+    } catch (e) {
+      setFallbackLoading(false);
+    }
   };
+
+  // Use fallback results if Redux results are empty and there's an error
+  const displayResults = results.length > 0 ? results : fallbackResults;
+  const displayLoading = loading || fallbackLoading;
+  const displayError = error && displayResults.length === 0;
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
@@ -48,7 +73,7 @@ export const SearchPage = () => {
       
       <AdvancedFilters />
       
-      {loading && (
+      {displayLoading && (
         <div
           style={{
             display: 'grid',
@@ -63,17 +88,17 @@ export const SearchPage = () => {
         </div>
       )}
       
-      {error && (
+      {displayError && (
         <ErrorMessage error={error} onRetry={handleRetry} />
       )}
       
-      {!loading && !error && results.length === 0 && (
+      {!displayLoading && !displayError && displayResults.length === 0 && (
         <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
           {query.trim() ? `No anime found for "${query}"` : 'No anime found with current filters'}
         </div>
       )}
       
-      {!loading && !error && results.length > 0 && (
+      {!displayLoading && displayResults.length > 0 && (
         <>
           <div
             style={{
@@ -83,12 +108,12 @@ export const SearchPage = () => {
               marginBottom: '20px',
             }}
           >
-            {results.map((anime) => (
+            {displayResults.map((anime) => (
               <AnimeCard key={anime.mal_id} anime={anime} />
             ))}
           </div>
           
-          <Pagination />
+          {results.length > 0 && <Pagination />}
         </>
       )}
     </div>

@@ -49,8 +49,8 @@ export const performSearch = createAsyncThunk(
     page: number; 
     filter?: string;
     advancedFilters?: { status?: string; score?: string; year?: string; genre?: string; };
-  }, { signal }) => {
-    const response = await searchAnime(query, page, filter, advancedFilters, signal);
+  }) => {
+    const response = await searchAnime(query, page, filter, advancedFilters);
     return response;
   }
 );
