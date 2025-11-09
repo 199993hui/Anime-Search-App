@@ -23,6 +23,7 @@ A React TypeScript application for discovering and exploring anime with advanced
 - **Clear Functionality**: One-click search clearing with visual feedback
 - **Combined Search + Filters**: Search query works seamlessly with all filter combinations
 - **Filter Persistence**: All selected filters maintained across pagination and navigation
+- **Smart State Caching**: Redux-based caching system automatically saves user's search context (query, filters, results) when navigating to detail page and returning to search results
 
 #### **Professional UI/UX**
 - **Skeleton Loaders**: Animated loading placeholders that match actual content layout
