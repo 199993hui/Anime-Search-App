@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
-import { performSearch, restoreCachedState } from '../store/searchSlice';
+import { performSearch } from '../store/searchSlice';
 import { searchAnime } from '../services/api';
 import { Anime } from '../types/anime';
 import { SearchBar } from '../components/SearchBar';
@@ -14,7 +14,7 @@ import { Pagination } from '../components/Pagination';
 
 export const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { results, loading, error, query, activeFilter, advancedFilters, cachedState } = useSelector((state: RootState) => state.search);
+  const { results, loading, error, query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
   const [fallbackResults, setFallbackResults] = useState<Anime[]>([]);
   const [fallbackLoading, setFallbackLoading] = useState(false);
 
