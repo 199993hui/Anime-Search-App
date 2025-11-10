@@ -20,12 +20,13 @@ export const SearchPage = () => {
 
   useEffect(() => {
     if (cachedState) {
+      const { query: cachedQuery, activeFilter: cachedFilter, advancedFilters: cachedAdvancedFilters } = cachedState;
       dispatch(restoreCachedState());
       dispatch(performSearch({ 
-        query: cachedState.query, 
+        query: cachedQuery, 
         page: 1, 
-        filter: cachedState.activeFilter, 
-        advancedFilters: cachedState.advancedFilters 
+        filter: cachedFilter, 
+        advancedFilters: cachedAdvancedFilters 
       }));
     } else {
       dispatch(performSearch({ query: '', page: 1, filter: 'all', advancedFilters: {} }));
