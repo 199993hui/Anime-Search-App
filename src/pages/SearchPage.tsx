@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store';
-import { performSearch } from '../store/searchSlice';
+import { performSearch, restoreCachedState } from '../store/searchSlice';
 import { searchAnime } from '../services/api';
 import { Anime } from '../types/anime';
 import { SearchBar } from '../components/SearchBar';
@@ -14,34 +14,36 @@ import { Pagination } from '../components/Pagination';
 
 export const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { results, loading, error, query, activeFilter, advancedFilters } = useSelector((state: RootState) => state.search);
+  const { results, loading, error, query, activeFilter, advancedFilters, cachedState } = useSelector((state: RootState) => state.search);
   const [fallbackResults, setFallbackResults] = useState<Anime[]>([]);
   const [fallbackLoading, setFallbackLoading] = useState(false);
 
   useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        dispatch(performSearch({ query: '', page: 1, filter: 'all', advancedFilters: {} }));
-        
-        // Fallback direct API call
-        setTimeout(async () => {
-          if (results.length === 0 && error) {
-            setFallbackLoading(true);
-            try {
-              const response = await searchAnime('', 1);
-              setFallbackResults(response.data);
-            } catch (e) {
-              console.error('Fallback failed:', e);
-            }
-            setFallbackLoading(false);
-          }
-        }, 1000);
-      } catch (e) {
-        console.error('Initial load failed:', e);
-      }
-    };
+    if (cachedState) {
+      dispatch(restoreCachedState());
+      dispatch(performSearch({ 
+        query: cachedState.query, 
+        page: 1, 
+        filter: cachedState.activeFilter, 
+        advancedFilters: cachedState.advancedFilters 
+      }));
+    } else {
+      dispatch(performSearch({ query: '', page: 1, filter: 'all', advancedFilters: {} }));
+    }
     
-    loadInitialData();
+    // Fallback system
+    const fallbackTimer = setTimeout(async () => {
+      setFallbackLoading(true);
+      try {
+        const response = await searchAnime('', 1);
+        setFallbackResults(response.data);
+      } catch (e) {
+        console.error('Fallback failed:', e);
+      }
+      setFallbackLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(fallbackTimer);
   }, [dispatch]);
 
   const handleRetry = async () => {
