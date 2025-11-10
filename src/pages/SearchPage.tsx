@@ -31,21 +31,25 @@ export const SearchPage = () => {
     } else {
       dispatch(performSearch({ query: '', page: 1, filter: 'all', advancedFilters: {} }));
     }
-    
-    // Fallback system
+  }, [dispatch]);
+
+  // Separate effect for fallback system - only on initial load
+  useEffect(() => {
     const fallbackTimer = setTimeout(async () => {
-      setFallbackLoading(true);
-      try {
-        const response = await searchAnime('', 1);
-        setFallbackResults(response.data);
-      } catch (e) {
-        console.error('Fallback failed:', e);
+      if (error && results.length === 0 && !query.trim() && activeFilter === 'all' && Object.keys(advancedFilters).length === 0) {
+        setFallbackLoading(true);
+        try {
+          const response = await searchAnime('', 1);
+          setFallbackResults(response.data);
+        } catch (e) {
+          console.error('Fallback failed:', e);
+        }
+        setFallbackLoading(false);
       }
-      setFallbackLoading(false);
-    }, 1000);
+    }, 1500);
     
     return () => clearTimeout(fallbackTimer);
-  }, [dispatch]);
+  }, [error, results.length, query, activeFilter, advancedFilters]);
 
   const handleRetry = async () => {
     dispatch(performSearch({ query, page: 1, filter: activeFilter, advancedFilters }));
