@@ -1,5 +1,7 @@
 # Anime Search App
 
+🌐 **[Live Demo](https://animeseacher.netlify.app/)**
+
 A React TypeScript application for discovering and exploring anime with advanced filtering capabilities. Built with modern enhanced user experience features.
 
 ## 🎯 Bonus Implementation
